@@ -29,6 +29,7 @@ const Forms = () => {
   let [phoneNumber, setPhoneNumber] = useState();
 
   //About Us:
+  let [brandName, setBrandName] = useState();
   let [category, setCategory] = useState();
   let [yearOfEst, setYearOfEst] = useState();
   let [bussiness, setBussiness] = useState();
@@ -106,24 +107,23 @@ const Forms = () => {
       const token = localStorage.getItem("token");
 
       let aboutData = {
-        companyName,
+        brandName,
         category,
         yearOfEst,
         bussiness,
         value,
       };
       // Make authenticated request with bearer token
-      await axios.post("http://localhost:3001/api/about/", aboutData, {
+      await axios.post("http://localhost:3001/api/user/about", aboutData, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
-      count++;
       alert("Form Submited Sucessfully");
     } catch (error) {
       // Handle errors
       setError(error.response.data.error);
-      alert("Something Error");
+      alert("Something Error" + error.message);
     }
   }
   async function handleServiceSubmit(e) {
@@ -140,7 +140,7 @@ const Forms = () => {
         serviceEnquiry,
       };
       // Make authenticated request with bearer token
-      await axios.post("http://localhost:3001/api/service/", serviceData, {
+      await axios.post("http://localhost:3001/api/user/service", serviceData, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -387,6 +387,19 @@ const Forms = () => {
           >
             <form onSubmit={handleAboutSubmit}>
               <div className="profile_heading">About Us</div>
+              <div className="form_group">
+                <label className="label" htmlFor="brandName">
+                  Company Name
+                </label>
+                <input
+                  value={brandName}
+                  onChange={(e) => setBrandName(e.target.value)}
+                  type="text"
+                  id="brandName"
+                  name="brandName"
+                  placeholder="Enter your company name"
+                />
+              </div>
               <div className="form_group">
                 <label className="label" htmlFor="category">
                   Category

@@ -269,7 +269,7 @@ const Card = ({ serviceMessage, value, setServiceMessage, setValue }) => {
                             src="https://img.icons8.com/pieces/64/experimental-arrow-pieces.png"
                             alt="experimental-arrow-pieces"
                           />
-                          <p>{data.companyName}</p>
+                          <p>{data.brandName}</p>
                         </div>
                         <div className="category">
                           <h6>Category </h6>
