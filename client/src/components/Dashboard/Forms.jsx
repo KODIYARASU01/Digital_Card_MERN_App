@@ -1,10 +1,11 @@
 import React, { useState } from "react";
 import "./Form.scss";
 import profile from "/src/assets/profile.png";
-
+import axios from "axios";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 const Forms = () => {
+  let [error, setError] = useState();
   //Profile
   let [count, setCount] = useState(0);
   let [profileImage, setProfileImage] = useState();
@@ -17,7 +18,7 @@ const Forms = () => {
   let [location, setLocation] = useState();
   let [mail, setMail] = useState();
   //Address link
-  let [address, setAddess] = useState();
+  let [companyAddress, setCompanyAddress] = useState();
   let [companyEmail, setCompanyEmail] = useState();
   let [websiteLink, setWebsiteLink] = useState();
   let [phoneNumber, setPhoneNumber] = useState();
@@ -58,6 +59,37 @@ const Forms = () => {
   let [servicesFormShow, setServicesFormShow] = useState(false);
   let [paymentFormShow, setPaymentFormShow] = useState(false);
   let [galleryFormShow, setGalleryFormShow] = useState(false);
+
+  async function handleProfileSubmit(e) {
+    e.preventDefault();
+    try {
+      // Retrieve token from local storage or wherever it's stored
+      const token = localStorage.getItem("token");
+
+      let data = {
+        profileImage,
+        companyName,
+        authorName,
+        mobile,
+        whatsup,
+        location,
+        mail,
+        companyAddress,
+        companyEmail,
+        websiteLink,
+        phoneNumber,
+      };
+      // Make authenticated request with bearer token
+      await axios.post("http://localhost:3001/api/user/", data, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+    } catch (error) {
+      // Handle errors
+      setError(error.response.data.error);
+    }
+  }
   return (
     <>
       <div className="box_left">
@@ -97,7 +129,7 @@ const Forms = () => {
             className="home_form"
             id={homeFormShow ? "homeFormShow" : "homeFormHide"}
           >
-            <form>
+            <form onSubmit={handleProfileSubmit}>
               <div className="profile_heading">Add Profile</div>
               <div className="form_group">
                 <label htmlFor="file" className="upload">
@@ -192,8 +224,8 @@ const Forms = () => {
                   Company Location
                 </label>
                 <input
-                  value={address}
-                  onChange={(e) => setAddess(e.target.value)}
+                  value={companyAddress}
+                  onChange={(e) => setCompanyAddress(e.target.value)}
                   type="text"
                   id="company_loction"
                   name="company_loction"

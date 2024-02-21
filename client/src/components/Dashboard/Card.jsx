@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import website from "/src/assets/website_dev.jpeg";
 import avator from "/src/assets/profile.png";
 import phone from "/src/assets/phone.gif";
@@ -6,8 +6,44 @@ import pic1 from "/src/assets/gallery/1.png";
 import pic2 from "/src/assets/gallery/2.png";
 import pic3 from "/src/assets/gallery/3.png";
 import pic4 from "/src/assets/gallery/4.png";
+import axios from "axios";
 let gallerys = [pic1, pic2, pic3, pic4];
 const Card = ({ serviceMessage, value, setServiceMessage, setValue }) => {
+  const [userData, setUserData] = useState(null);
+  const [error, setError] = useState(null);
+  console.log(userData);
+  useEffect(() => {
+    // Fetch user data
+    const fetchUserData = async () => {
+      try {
+        // Retrieve token from local storage or wherever it's stored
+        const token = localStorage.getItem("token");
+
+        // Make authenticated request with bearer token
+        const response = await axios.get("http://localhost:3001/api/user/", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        // Set user data
+        setUserData(response.data);
+      } catch (error) {
+        // Handle errors
+        setError(error.response.data.error);
+      }
+    };
+
+    fetchUserData();
+  }, []);
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
+
+  if (!userData) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <>
       <div className="box_right">
@@ -31,116 +67,121 @@ const Card = ({ serviceMessage, value, setServiceMessage, setValue }) => {
           </div>
           <div className="card_box">
             {/* //Home page */}
-            <div className="home">
-              <div>
-                <div className="views">
-                  <img
-                    width="48"
-                    height="48"
-                    src="https://img.icons8.com/color/48/visible.png"
-                    alt="visible"
-                  />
-                  <p>
-                    Views : <span>0</span>
-                  </p>
-                </div>
-                <div className="profile_pic">
-                  <img src={avator} alt=" Profile" />
-                </div>
-                <div className="company_name">
-                  <h4>Company Name</h4>
-                </div>
-                <div className="owner_name">
-                  <p>
-                    <span>(Propertier)</span>
-                  </p>
-                </div>
-                <div className="be_touch">
-                  <p>Let's talk and visit us :</p>
-
-                  <div className="actions">
-                    <a href={`tel:+91 }`}>
-                      <img
-                        width="64"
-                        height="64"
-                        src="https://img.icons8.com/arcade/64/call-male.png"
-                        alt="call-male"
-                      />
-                      <p>Call</p>
-                    </a>
-                    <a
-                      href={`https://api.whatsapp.com/send?phone=+91 ${1}&text=Hi%2C%20There!`}
-                      target="_blank"
-                    >
+            {userData.map((data, index) => {
+              return (
+                <div className="home" key={index}>
+                  <div>
+                    <div className="views">
                       <img
                         width="48"
                         height="48"
-                        src="https://img.icons8.com/color/48/whatsapp--v1.png"
-                        alt="whatsapp--v1"
+                        src="https://img.icons8.com/color/48/visible.png"
+                        alt="visible"
                       />
-                      <p>WhatsUp</p>
-                    </a>
-                    <a href="#" target="_blank">
-                      <img
-                        width="64"
-                        height="64"
-                        src="https://img.icons8.com/arcade/64/south-direction.png"
-                        alt="south-direction"
-                      />
-                      <p>Direction</p>
-                    </a>
+                      <p>
+                        Views : <span>0</span>
+                      </p>
+                    </div>
+                    <div className="profile_pic">
+                      <img src={data.profileImage || avator} alt=" Profile" />
+                    </div>
+                    <div className="company_name">
+                      <h4>{data.companyName}</h4>
+                    </div>
+                    <div className="owner_name">
+                      <p>
+                        {data.authorName}
+                        <span>(Propertier)</span>
+                      </p>
+                    </div>
+                    <div className="be_touch">
+                      <p>Let's talk and visit us :</p>
 
-                    <a href={`mailto:${1}`}>
-                      <img
-                        width="64"
-                        height="64"
-                        src="https://img.icons8.com/arcade/64/new-post--v2.png"
-                        alt="new-post--v2"
-                      />
-                      <p>Mail</p>
-                    </a>
+                      <div className="actions">
+                        <a href={`tel:+91 ${data.mobile} }`}>
+                          <img
+                            width="64"
+                            height="64"
+                            src="https://img.icons8.com/arcade/64/call-male.png"
+                            alt="call-male"
+                          />
+                          <p>Call</p>
+                        </a>
+                        <a
+                          href={`https://api.whatsapp.com/send?phone=+91 ${data.whatsUp}&text=Hi%2C%20There!`}
+                          target="_blank"
+                        >
+                          <img
+                            width="48"
+                            height="48"
+                            src="https://img.icons8.com/color/48/whatsapp--v1.png"
+                            alt="whatsapp--v1"
+                          />
+                          <p>WhatsUp</p>
+                        </a>
+                        <a href={data.location} target="_blank">
+                          <img
+                            width="64"
+                            height="64"
+                            src="https://img.icons8.com/arcade/64/south-direction.png"
+                            alt="south-direction"
+                          />
+                          <p>Direction</p>
+                        </a>
+
+                        <a href={`mailto:${data.mail}`}>
+                          <img
+                            width="64"
+                            height="64"
+                            src="https://img.icons8.com/arcade/64/new-post--v2.png"
+                            alt="new-post--v2"
+                          />
+                          <p>Mail</p>
+                        </a>
+                      </div>
+                    </div>
+                    <div className="address_details">
+                      <div className="street">
+                        <img
+                          width="94"
+                          height="94"
+                          src="https://img.icons8.com/3d-fluency/94/location.png"
+                          alt="location"
+                        />
+                        <p>{data.companyAddress}</p>
+                      </div>
+                      <div className="mail">
+                        <img
+                          width="48"
+                          height="48"
+                          src="https://img.icons8.com/color/48/filled-message.png"
+                          alt="filled-message"
+                        />
+                        <p>{data.companyEmail}</p>
+                      </div>
+                      <div className="site">
+                        <img
+                          width="48"
+                          height="48"
+                          src="https://img.icons8.com/fluency/48/domain.png"
+                          alt="domain"
+                        />
+                        <p>{data.websiteLink}</p>
+                      </div>
+                      <div className="contact">
+                        <img
+                          width="48"
+                          height="48"
+                          src="https://img.icons8.com/fluency/48/contact-card.png"
+                          alt="contact-card"
+                        />
+                        <p>{`(+91) ${data.phoneNumber}`}</p>
+                      </div>
+                    </div>
                   </div>
                 </div>
-                <div className="address_details">
-                  <div className="street">
-                    <img
-                      width="94"
-                      height="94"
-                      src="https://img.icons8.com/3d-fluency/94/location.png"
-                      alt="location"
-                    />
-                    <p>{"Comapany Address"}</p>
-                  </div>
-                  <div className="mail">
-                    <img
-                      width="48"
-                      height="48"
-                      src="https://img.icons8.com/color/48/filled-message.png"
-                      alt="filled-message"
-                    />
-                    <p>{"Company Email ID"}</p>
-                  </div>
-                  <div className="site">
-                    <img
-                      width="48"
-                      height="48"
-                      src="https://img.icons8.com/fluency/48/domain.png"
-                      alt="domain"
-                    />
-                    <p>{"Website Link"}</p>
-                  </div>
-                  <div className="contact">
-                    <img
-                      width="48"
-                      height="48"
-                      src="https://img.icons8.com/fluency/48/contact-card.png"
-                      alt="contact-card"
-                    />
-                    <p>{`(+91) ${1}`}</p>
-                  </div>
-                </div>
-              </div>
-            </div>
+              );
+            })}
             {/* About page */}
             <div className="about">
               <div className="about_title">
