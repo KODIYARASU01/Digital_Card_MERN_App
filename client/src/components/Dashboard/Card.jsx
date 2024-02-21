@@ -79,7 +79,7 @@ const Card = ({ serviceMessage, value, setServiceMessage, setValue }) => {
                         alt="visible"
                       />
                       <p>
-                        Views : <span>0</span>
+                        Views : <span>{data.count}</span>
                       </p>
                     </div>
                     <div className="profile_pic">

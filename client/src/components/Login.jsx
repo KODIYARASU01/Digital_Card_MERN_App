@@ -2,7 +2,7 @@ import "./styles/User.scss";
 import { Link, useNavigate } from "react-router-dom";
 import avator from "../assets/profile.png";
 import company from "../assets/aristostech.jpg";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 
 export default function Login() {

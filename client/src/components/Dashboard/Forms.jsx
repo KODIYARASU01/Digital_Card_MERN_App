@@ -67,6 +67,7 @@ const Forms = () => {
       const token = localStorage.getItem("token");
 
       let data = {
+        count,
         profileImage,
         companyName,
         authorName,
@@ -85,9 +86,12 @@ const Forms = () => {
           Authorization: `Bearer ${token}`,
         },
       });
+      count++;
+      alert("Form Submited Sucessfully");
     } catch (error) {
       // Handle errors
       setError(error.response.data.error);
+      alert("Something Error");
     }
   }
   return (

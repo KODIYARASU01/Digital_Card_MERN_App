@@ -1,8 +1,10 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import "./Navbar.scss";
 
 import logo from "/src/assets/LOGO.png";
 import avator from "/src/assets/profile.png";
+import axios from "axios";
+
 const Navbar = () => {
   return (
     <>

@@ -5,12 +5,12 @@ import company from "../assets/aristostech.jpg";
 import { useState } from "react";
 // import { registerValidate } from "./helper/registerValidate";
 // import useFormik from "formik";
-import convertToBase64 from "./helper/convert";
+import convertToBase64 from "../helper/convert.js";
 import axios from "axios";
 export default function Register() {
   let navigate = useNavigate();
   //Image store state :
-  let [file, setFile] = useState();
+  let [profile, setProfile] = useState();
   let [userName, setUserName] = useState();
   let [email, setEmail] = useState();
   let [password, setPassword] = useState();
@@ -21,7 +21,7 @@ export default function Register() {
     // let { userName, password, email } = req.body;
 
     try {
-      let data = { userName, email, password };
+      let data = { userName, email, password, profile };
       let result = await axios.post("http://localhost:3001/api/register", data);
       console.log(result);
       if (result) {
@@ -62,7 +62,7 @@ export default function Register() {
   const onUpload = async (e) => {
     let base64 = await convertToBase64(e.target.files[0]);
 
-    setFile(base64);
+    setProfile(base64);
   };
 
   return (
@@ -96,7 +96,7 @@ export default function Register() {
           <div className="profile flex justify-center p-4">
             <div className="form_group">
               <label htmlFor="profile">
-                <img src={file || avator} alt="avatar" id="profile_image" />
+                <img src={profile || avator} alt="avatar" id="profile_image" />
                 <img
                   id="camera"
                   width="64"
