@@ -12,9 +12,12 @@ const Card = ({ serviceMessage, value, setServiceMessage, setValue }) => {
   const [userData, setUserData] = useState(null);
   const [aboutData, setAboutData] = useState(null);
   const [serviceData, setServiceData] = useState(null);
+  const [paymentData, setPaymentData] = useState(null);
   const [error, setError] = useState(null);
   console.log(userData);
   console.log(aboutData);
+
+  //Home data Fetch
   useEffect(() => {
     // Fetch user data
     const fetchUserData = async () => {
@@ -39,6 +42,7 @@ const Card = ({ serviceMessage, value, setServiceMessage, setValue }) => {
 
     fetchUserData();
   }, []);
+  //About data fetch
   useEffect(() => {
     // Fetch user data
     const fetchAboutData = async () => {
@@ -66,6 +70,7 @@ const Card = ({ serviceMessage, value, setServiceMessage, setValue }) => {
 
     fetchAboutData();
   }, []);
+  //Service data fetch
   useEffect(() => {
     // Fetch user data
     const fetchServiceData = async () => {
@@ -92,6 +97,35 @@ const Card = ({ serviceMessage, value, setServiceMessage, setValue }) => {
     };
 
     fetchServiceData();
+  }, []);
+
+  //Payment data fetch
+  useEffect(() => {
+    // Fetch user data
+    const fetchPaymentData = async () => {
+      try {
+        // Retrieve token from local storage or wherever it's stored
+        const token = localStorage.getItem("token");
+
+        // Make authenticated request with bearer token
+        const response = await axios.get(
+          "http://localhost:3001/api/user/payment/",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        // Set user data
+        setPaymentData(response.data);
+      } catch (error) {
+        // Handle errors
+        setError(error.response.data.error);
+      }
+    };
+
+    fetchPaymentData();
   }, []);
   if (error) {
     return <div>Error: {error}</div>;
@@ -373,94 +407,102 @@ const Card = ({ serviceMessage, value, setServiceMessage, setValue }) => {
             </div>
             {/* payment page */}
             <div className="payment">
-              <div className="payment_title">
-                <h4>Payment</h4>
-                <img
-                  width="16"
-                  height="16"
-                  src="https://img.icons8.com/office/16/money-bag-euro.png"
-                  alt="money-bag-euro"
-                />
-              </div>
+              {paymentData !== null
+                ? paymentData.map((data, index) => {
+                    return (
+                      <div key={index}>
+                        <div className="payment_title">
+                          <h4>Payment</h4>
+                          <img
+                            width="16"
+                            height="16"
+                            src="https://img.icons8.com/office/16/money-bag-euro.png"
+                            alt="money-bag-euro"
+                          />
+                        </div>
 
-              <div className="container_1">
-                <div className="row_1">
-                  <h6>Phone Pay Number</h6>
-                  <img
-                    width="64"
-                    height="64"
-                    src="https://img.icons8.com/pieces/64/experimental-arrow-pieces.png"
-                    alt="experimental-arrow-pieces"
-                  />
-                  <p>+91 8825457794</p>
-                </div>
-                <div className="row_2">
-                  <h6>Google Pay Number</h6>
-                  <img
-                    width="64"
-                    height="64"
-                    src="https://img.icons8.com/pieces/64/experimental-arrow-pieces.png"
-                    alt="experimental-arrow-pieces"
-                  />
-                  <p>+91 8825457794</p>
-                </div>
-              </div>
+                        <div className="container_1">
+                          <div className="row_1">
+                            <h6>Phone Pay Number</h6>
+                            <img
+                              width="64"
+                              height="64"
+                              src="https://img.icons8.com/pieces/64/experimental-arrow-pieces.png"
+                              alt="experimental-arrow-pieces"
+                            />
+                            <p>+91 {data.phonePayNumber}</p>
+                          </div>
+                          <div className="row_2">
+                            <h6>Google Pay Number</h6>
+                            <img
+                              width="64"
+                              height="64"
+                              src="https://img.icons8.com/pieces/64/experimental-arrow-pieces.png"
+                              alt="experimental-arrow-pieces"
+                            />
+                            <p>+91 {data.gPayNumber}</p>
+                          </div>
+                        </div>
 
-              <div className="container_2">
-                <div className="container2_title">
-                  <h5>Account Details</h5>
-                </div>
-                <div className="row_1">
-                  <h6>Bank Name</h6>
-                  <img
-                    width="64"
-                    height="64"
-                    src="https://img.icons8.com/pieces/64/experimental-arrow-pieces.png"
-                    alt="experimental-arrow-pieces"
-                  />
-                  <p>State Bank Of India</p>
-                </div>
-                <div className="row_2">
-                  <h6>IFSC Code</h6>
-                  <img
-                    width="64"
-                    height="64"
-                    src="https://img.icons8.com/pieces/64/experimental-arrow-pieces.png"
-                    alt="experimental-arrow-pieces"
-                  />
-                  <p>SBIN0007585</p>
-                </div>
-                <div className="row_3">
-                  <h6>Customer Name</h6>
-                  <img
-                    width="64"
-                    height="64"
-                    src="https://img.icons8.com/pieces/64/experimental-arrow-pieces.png"
-                    alt="experimental-arrow-pieces"
-                  />
-                  <p>Kodiyarasu C</p>
-                </div>
-                <div className="row_4">
-                  <h6>Account Number</h6>
-                  <img
-                    width="64"
-                    height="64"
-                    src="https://img.icons8.com/pieces/64/experimental-arrow-pieces.png"
-                    alt="experimental-arrow-pieces"
-                  />
-                  <p>37117701604</p>
-                </div>
-                <div className="row_5">
-                  <h6>Account Type</h6>
-                  <img
-                    width="64"
-                    height="64"
-                    src="https://img.icons8.com/pieces/64/experimental-arrow-pieces.png"
-                    alt="experimental-arrow-pieces"
-                  />
-                  <p>Saving</p>
-                </div>
-              </div>
+                        <div className="container_2">
+                          <div className="container2_title">
+                            <h5>Account Details</h5>
+                          </div>
+                          <div className="row_1">
+                            <h6>Bank Name</h6>
+                            <img
+                              width="64"
+                              height="64"
+                              src="https://img.icons8.com/pieces/64/experimental-arrow-pieces.png"
+                              alt="experimental-arrow-pieces"
+                            />
+                            <p>{data.bankName}</p>
+                          </div>
+                          <div className="row_2">
+                            <h6>IFSC Code</h6>
+                            <img
+                              width="64"
+                              height="64"
+                              src="https://img.icons8.com/pieces/64/experimental-arrow-pieces.png"
+                              alt="experimental-arrow-pieces"
+                            />
+                            <p>{data.IFSC}</p>
+                          </div>
+                          <div className="row_3">
+                            <h6>Customer Name</h6>
+                            <img
+                              width="64"
+                              height="64"
+                              src="https://img.icons8.com/pieces/64/experimental-arrow-pieces.png"
+                              alt="experimental-arrow-pieces"
+                            />
+                            <p>{data.customerName}</p>
+                          </div>
+                          <div className="row_4">
+                            <h6>Account Number</h6>
+                            <img
+                              width="64"
+                              height="64"
+                              src="https://img.icons8.com/pieces/64/experimental-arrow-pieces.png"
+                              alt="experimental-arrow-pieces"
+                            />
+                            <p>{data.accountNumber}</p>
+                          </div>
+                          <div className="row_5">
+                            <h6>Account Type</h6>
+                            <img
+                              width="64"
+                              height="64"
+                              src="https://img.icons8.com/pieces/64/experimental-arrow-pieces.png"
+                              alt="experimental-arrow-pieces"
+                            />
+                            <p>{data.AcountType}</p>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })
+                : ""}
             </div>
             {/* Gallery page */}
 

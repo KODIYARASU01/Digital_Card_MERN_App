@@ -54,6 +54,15 @@ const Forms = () => {
   let [servicePrice, setServicePrice] = useState();
   let [serviceEnquiry, setServiceEnquiry] = useState();
 
+  //Payment:
+  let [phonePayNumber, setPhonePayNumber] = useState();
+  let [gPayNumber, setGPayNumber] = useState();
+  let [bankName, setBankName] = useState();
+  let [IFSC, setIFSC] = useState();
+  let [customerName, setCustomerName] = useState();
+  let [accountNumber, setAccountNumber] = useState();
+  let [AcountType, setAccountType] = useState();
+
   //Gallery :
 
   let [gallery, setGallery] = useState();
@@ -66,6 +75,7 @@ const Forms = () => {
   let [paymentFormShow, setPaymentFormShow] = useState(false);
   let [galleryFormShow, setGalleryFormShow] = useState(false);
 
+  //Home form submit:
   async function handleProfileSubmit(e) {
     e.preventDefault();
     try {
@@ -100,6 +110,7 @@ const Forms = () => {
       alert("Something Error");
     }
   }
+  //About form submit
   async function handleAboutSubmit(e) {
     e.preventDefault();
     try {
@@ -126,6 +137,7 @@ const Forms = () => {
       alert("Something Error" + error.message);
     }
   }
+  //service form submit
   async function handleServiceSubmit(e) {
     e.preventDefault();
     try {
@@ -146,6 +158,35 @@ const Forms = () => {
         },
       });
       alert("Form Submited Sucessfully");
+    } catch (error) {
+      // Handle errors
+      setError(error.response.data.error);
+      alert("Something Error" + error.message);
+    }
+  }
+  //payment from submit:
+  async function handlePaymentSubmit(e) {
+    e.preventDefault();
+    try {
+      // Retrieve token from local storage or wherever it's stored
+      const token = localStorage.getItem("token");
+
+      let paymentData = {
+        phonePayNumber,
+        gPayNumber,
+        bankName,
+        accountNumber,
+        customerName,
+        AcountType,
+        IFSC,
+      };
+      // Make authenticated request with bearer token
+      await axios.post("http://localhost:3001/api/user/payment", paymentData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      alert("Payment Form Submited Sucessfully");
     } catch (error) {
       // Handle errors
       setError(error.response.data.error);
@@ -592,7 +633,7 @@ const Forms = () => {
             className="payment_form"
             id={paymentFormShow ? "paymentFormShow" : "paymentFormHide"}
           >
-            <form>
+            <form onSubmit={handlePaymentSubmit}>
               <div className="profile_heading">Add Payment Details</div>
               <div className="social_media_input">
                 <div className="form_group">
@@ -604,6 +645,8 @@ const Forms = () => {
                     id="phonepay"
                     name="phonepay"
                     placeholder="Eg : +91 8825457794"
+                    value={phonePayNumber}
+                    onChange={(e) => setPhonePayNumber(e.target.value)}
                   />
                 </div>
 
@@ -616,6 +659,8 @@ const Forms = () => {
                     id="gpay"
                     name="gpay"
                     placeholder="Eg : +91 8825457794"
+                    value={gPayNumber}
+                    onChange={(e) => setGPayNumber(e.target.value)}
                   />
                 </div>
               </div>
@@ -626,6 +671,8 @@ const Forms = () => {
                     Bank Name
                   </label>
                   <input
+                    value={bankName}
+                    onChange={(e) => setBankName(e.target.value)}
                     type="text"
                     id="bankName"
                     name="bankName"
@@ -637,13 +684,25 @@ const Forms = () => {
                   <label className="label" htmlFor="ifsc">
                     IFSC Code
                   </label>
-                  <input type="text" id="ifsc" name="ifsc" />
+                  <input
+                    value={IFSC}
+                    onChange={(e) => setIFSC(e.target.value)}
+                    type="text"
+                    id="ifsc"
+                    name="ifsc"
+                  />
                 </div>
                 <div className="form_group">
                   <label className="label" htmlFor="customerName">
                     Customer Name
                   </label>
-                  <input type="text" id="customerName" name="customerName" />
+                  <input
+                    value={customerName}
+                    onChange={(e) => setCustomerName(e.target.value)}
+                    type="text"
+                    id="customerName"
+                    name="customerName"
+                  />
                 </div>
                 <div className="form_group">
                   <label className="label" htmlFor="accountNumber">
@@ -653,6 +712,8 @@ const Forms = () => {
                     type="number"
                     id="accountNumber"
                     name="accountNumber"
+                    value={accountNumber}
+                    onChange={(e) => setAccountNumber(e.target.value)}
                   />
                 </div>
                 <div className="form_group">
@@ -660,6 +721,8 @@ const Forms = () => {
                     Account Type
                   </label>
                   <input
+                    value={AcountType}
+                    onChange={(e) => setAccountType(e.target.value)}
                     type="text"
                     id="accountType"
                     name="accountType"
