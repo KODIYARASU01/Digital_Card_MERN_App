@@ -4,6 +4,11 @@ import profile from "/src/assets/profile.png";
 import axios from "axios";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
+import {
+  convertservicePicToBase64,
+  convertLogoPicToBase64,
+} from "../../helper/convert.js";
+
 const Forms = () => {
   let [error, setError] = useState();
   //Profile
@@ -94,6 +99,71 @@ const Forms = () => {
       alert("Something Error");
     }
   }
+  async function handleAboutSubmit(e) {
+    e.preventDefault();
+    try {
+      // Retrieve token from local storage or wherever it's stored
+      const token = localStorage.getItem("token");
+
+      let aboutData = {
+        companyName,
+        category,
+        yearOfEst,
+        bussiness,
+        value,
+      };
+      // Make authenticated request with bearer token
+      await axios.post("http://localhost:3001/api/about/", aboutData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      count++;
+      alert("Form Submited Sucessfully");
+    } catch (error) {
+      // Handle errors
+      setError(error.response.data.error);
+      alert("Something Error");
+    }
+  }
+  async function handleServiceSubmit(e) {
+    e.preventDefault();
+    try {
+      // Retrieve token from local storage or wherever it's stored
+      const token = localStorage.getItem("token");
+
+      let serviceData = {
+        serviceTitle,
+        servicePic,
+        serviceMessage,
+        servicePrice,
+        serviceEnquiry,
+      };
+      // Make authenticated request with bearer token
+      await axios.post("http://localhost:3001/api/service/", serviceData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      alert("Form Submited Sucessfully");
+    } catch (error) {
+      // Handle errors
+      setError(error.response.data.error);
+      alert("Something Error" + error.message);
+    }
+  }
+  //Formik does not support file upload so we could create handler :
+  const UploadLogoPic = async (e) => {
+    let base64 = await convertLogoPicToBase64(e.target.files[0]);
+
+    setProfileImage(base64);
+  };
+  const UploadServicePic = async (e) => {
+    let base64 = await convertservicePicToBase64(e.target.files[0]);
+
+    setServicePic(base64);
+  };
+
   return (
     <>
       <div className="box_left">
@@ -139,7 +209,12 @@ const Forms = () => {
                 <label htmlFor="file" className="upload">
                   <img src={profile} alt="upload" />
                 </label>
-                <input type="file" id="file" name="file" />
+                <input
+                  onChange={UploadLogoPic}
+                  type="file"
+                  id="file"
+                  name="file"
+                />
               </div>
               <div className="form_group">
                 <label className="label" htmlFor="company">
@@ -310,7 +385,7 @@ const Forms = () => {
             className="home_form"
             id={aboutFormShow ? "aboutFormShow" : "aboutFormHide"}
           >
-            <form>
+            <form onSubmit={handleAboutSubmit}>
               <div className="profile_heading">About Us</div>
               <div className="form_group">
                 <label className="label" htmlFor="category">
@@ -400,7 +475,7 @@ const Forms = () => {
             className="home_form"
             id={servicesFormShow ? "serviceFormShow" : "serviceFormHide"}
           >
-            <form>
+            <form onSubmit={handleServiceSubmit}>
               <div className="profile_heading">Our Services</div>
               <div className="form_group">
                 <label className="label" htmlFor="service">
@@ -429,9 +504,14 @@ const Forms = () => {
               <div className="form_group">
                 <label htmlFor="pic">Upload Service Picture</label>
                 <label htmlFor="file" className="upload">
-                  <img src={profile} alt="upload" />
+                  <img src={servicePic || profile} alt="upload" />
                 </label>
-                <input type="file" id="pic" name="pic" />
+                <input
+                  onChange={UploadServicePic}
+                  type="file"
+                  id="pic"
+                  name="pic"
+                />
               </div>
               <div className="form_group">
                 <label className="label" htmlFor="price">
@@ -439,7 +519,7 @@ const Forms = () => {
                 </label>
                 <input
                   value={servicePrice}
-                  onChange={setServicePrice}
+                  onChange={(e) => setServicePrice(e.target.value)}
                   type="number"
                   id="price"
                   name="price"

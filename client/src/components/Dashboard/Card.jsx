@@ -10,8 +10,11 @@ import axios from "axios";
 let gallerys = [pic1, pic2, pic3, pic4];
 const Card = ({ serviceMessage, value, setServiceMessage, setValue }) => {
   const [userData, setUserData] = useState(null);
+  const [aboutData, setAboutData] = useState(null);
+  const [serviceData, setServiceData] = useState(null);
   const [error, setError] = useState(null);
   console.log(userData);
+  console.log(aboutData);
   useEffect(() => {
     // Fetch user data
     const fetchUserData = async () => {
@@ -35,6 +38,60 @@ const Card = ({ serviceMessage, value, setServiceMessage, setValue }) => {
     };
 
     fetchUserData();
+  }, []);
+  useEffect(() => {
+    // Fetch user data
+    const fetchAboutData = async () => {
+      try {
+        // Retrieve token from local storage or wherever it's stored
+        const token = localStorage.getItem("token");
+
+        // Make authenticated request with bearer token
+        const response = await axios.get(
+          "http://localhost:3001/api/user/about/",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        // Set user data
+        setAboutData(response.data);
+      } catch (error) {
+        // Handle errors
+        setError(error.response.data.error);
+      }
+    };
+
+    fetchAboutData();
+  }, []);
+  useEffect(() => {
+    // Fetch user data
+    const fetchServiceData = async () => {
+      try {
+        // Retrieve token from local storage or wherever it's stored
+        const token = localStorage.getItem("token");
+
+        // Make authenticated request with bearer token
+        const response = await axios.get(
+          "http://localhost:3001/api/user/service/",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        // Set user data
+        setServiceData(response.data);
+      } catch (error) {
+        // Handle errors
+        setError(error.response.data.error);
+      }
+    };
+
+    fetchServiceData();
   }, []);
   if (error) {
     return <div>Error: {error}</div>;
@@ -67,229 +124,252 @@ const Card = ({ serviceMessage, value, setServiceMessage, setValue }) => {
           </div>
           <div className="card_box">
             {/* //Home page */}
-            {userData.map((data, index) => {
-              return (
-                <div className="home" key={index}>
-                  <div>
-                    <div className="views">
-                      <img
-                        width="48"
-                        height="48"
-                        src="https://img.icons8.com/color/48/visible.png"
-                        alt="visible"
-                      />
-                      <p>
-                        Views : <span>{data.count}</span>
-                      </p>
-                    </div>
-                    <div className="profile_pic">
-                      <img src={data.profileImage || avator} alt=" Profile" />
-                    </div>
-                    <div className="company_name">
-                      <h4>{data.companyName}</h4>
-                    </div>
-                    <div className="owner_name">
-                      <p>
-                        {data.authorName}
-                        <span>(Propertier)</span>
-                      </p>
-                    </div>
-                    <div className="be_touch">
-                      <p>Let's talk and visit us :</p>
 
-                      <div className="actions">
-                        <a href={`tel:+91 ${data.mobile} }`}>
-                          <img
-                            width="64"
-                            height="64"
-                            src="https://img.icons8.com/arcade/64/call-male.png"
-                            alt="call-male"
-                          />
-                          <p>Call</p>
-                        </a>
-                        <a
-                          href={`https://api.whatsapp.com/send?phone=+91 ${data.whatsUp}&text=Hi%2C%20There!`}
-                          target="_blank"
-                        >
+            {userData !== null
+              ? userData.map((data, index) => {
+                  return (
+                    <div className="home" key={index}>
+                      <div>
+                        <div className="views">
                           <img
                             width="48"
                             height="48"
-                            src="https://img.icons8.com/color/48/whatsapp--v1.png"
-                            alt="whatsapp--v1"
+                            src="https://img.icons8.com/color/48/visible.png"
+                            alt="visible"
                           />
-                          <p>WhatsUp</p>
-                        </a>
-                        <a href={data.location} target="_blank">
+                          <p>
+                            Views : <span>{data.count}</span>
+                          </p>
+                        </div>
+                        <div className="profile_pic">
                           <img
-                            width="64"
-                            height="64"
-                            src="https://img.icons8.com/arcade/64/south-direction.png"
-                            alt="south-direction"
+                            src={data.profileImage || avator}
+                            alt=" Profile"
                           />
-                          <p>Direction</p>
-                        </a>
+                        </div>
+                        <div className="company_name">
+                          <h4>{data.companyName}</h4>
+                        </div>
+                        <div className="owner_name">
+                          <p>
+                            {data.authorName}
+                            <span>(Propertier)</span>
+                          </p>
+                        </div>
+                        <div className="be_touch">
+                          <p>Let's talk and visit us :</p>
 
-                        <a href={`mailto:${data.mail}`}>
-                          <img
-                            width="64"
-                            height="64"
-                            src="https://img.icons8.com/arcade/64/new-post--v2.png"
-                            alt="new-post--v2"
-                          />
-                          <p>Mail</p>
-                        </a>
+                          <div className="actions">
+                            <a href={`tel:+91 ${data.mobile} }`}>
+                              <img
+                                width="64"
+                                height="64"
+                                src="https://img.icons8.com/arcade/64/call-male.png"
+                                alt="call-male"
+                              />
+                              <p>Call</p>
+                            </a>
+                            <a
+                              href={`https://api.whatsapp.com/send?phone=+91 ${data.whatsUp}&text=Hi%2C%20There!`}
+                              target="_blank"
+                            >
+                              <img
+                                width="48"
+                                height="48"
+                                src="https://img.icons8.com/color/48/whatsapp--v1.png"
+                                alt="whatsapp--v1"
+                              />
+                              <p>WhatsUp</p>
+                            </a>
+                            <a href={data.location} target="_blank">
+                              <img
+                                width="64"
+                                height="64"
+                                src="https://img.icons8.com/arcade/64/south-direction.png"
+                                alt="south-direction"
+                              />
+                              <p>Direction</p>
+                            </a>
+
+                            <a href={`mailto:${data.mail}`}>
+                              <img
+                                width="64"
+                                height="64"
+                                src="https://img.icons8.com/arcade/64/new-post--v2.png"
+                                alt="new-post--v2"
+                              />
+                              <p>Mail</p>
+                            </a>
+                          </div>
+                        </div>
+                        <div className="address_details">
+                          <div className="street">
+                            <img
+                              width="94"
+                              height="94"
+                              src="https://img.icons8.com/3d-fluency/94/location.png"
+                              alt="location"
+                            />
+                            <p>{data.companyAddress}</p>
+                          </div>
+                          <div className="mail">
+                            <img
+                              width="48"
+                              height="48"
+                              src="https://img.icons8.com/color/48/filled-message.png"
+                              alt="filled-message"
+                            />
+                            <p>{data.companyEmail}</p>
+                          </div>
+                          <div className="site">
+                            <img
+                              width="48"
+                              height="48"
+                              src="https://img.icons8.com/fluency/48/domain.png"
+                              alt="domain"
+                            />
+                            <p>{data.websiteLink}</p>
+                          </div>
+                          <div className="contact">
+                            <img
+                              width="48"
+                              height="48"
+                              src="https://img.icons8.com/fluency/48/contact-card.png"
+                              alt="contact-card"
+                            />
+                            <p>{`(+91) ${data.phoneNumber}`}</p>
+                          </div>
+                        </div>
                       </div>
                     </div>
-                    <div className="address_details">
-                      <div className="street">
-                        <img
-                          width="94"
-                          height="94"
-                          src="https://img.icons8.com/3d-fluency/94/location.png"
-                          alt="location"
-                        />
-                        <p>{data.companyAddress}</p>
-                      </div>
-                      <div className="mail">
-                        <img
-                          width="48"
-                          height="48"
-                          src="https://img.icons8.com/color/48/filled-message.png"
-                          alt="filled-message"
-                        />
-                        <p>{data.companyEmail}</p>
-                      </div>
-                      <div className="site">
-                        <img
-                          width="48"
-                          height="48"
-                          src="https://img.icons8.com/fluency/48/domain.png"
-                          alt="domain"
-                        />
-                        <p>{data.websiteLink}</p>
-                      </div>
-                      <div className="contact">
-                        <img
-                          width="48"
-                          height="48"
-                          src="https://img.icons8.com/fluency/48/contact-card.png"
-                          alt="contact-card"
-                        />
-                        <p>{`(+91) ${data.phoneNumber}`}</p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
+                  );
+                })
+              : ""}
             {/* About page */}
-            <div className="about">
-              <div className="about_title">
-                <h4>About Us</h4>
-                <img
-                  width="64"
-                  height="64"
-                  src="https://img.icons8.com/flat-round/64/info.png"
-                  alt="info"
-                />
-              </div>
-              <div className="about_content">
-                <div className="company_name">
-                  <h6>Company Name </h6>
-                  <img
-                    width="64"
-                    height="64"
-                    src="https://img.icons8.com/pieces/64/experimental-arrow-pieces.png"
-                    alt="experimental-arrow-pieces"
-                  />
-                  <p>Compnay name</p>
-                </div>
-                <div className="category">
-                  <h6>Category </h6>
-                  <img
-                    width="64"
-                    height="64"
-                    src="https://img.icons8.com/pieces/64/experimental-arrow-pieces.png"
-                    alt="experimental-arrow-pieces"
-                  />
-                  <p>Category</p>
-                </div>
-                <div className="year">
-                  <h6>Year of Est </h6>
-                  <img
-                    width="64"
-                    height="64"
-                    src="https://img.icons8.com/pieces/64/experimental-arrow-pieces.png"
-                    alt="experimental-arrow-pieces"
-                  />
-                  <p>2021</p>
-                </div>
-                <div className="bussiness">
-                  <h6>Nature of Business</h6>
-                  <img
-                    width="64"
-                    height="64"
-                    src="https://img.icons8.com/pieces/64/experimental-arrow-pieces.png"
-                    alt="experimental-arrow-pieces"
-                  />
-                  <p>bussiness</p>
-                </div>
-              </div>
-              <div className="our_specialities">
-                <div className="specialities_title">
-                  <h4>Our Specialities</h4>
-                  <img
-                    width="64"
-                    height="64"
-                    src="https://img.icons8.com/external-flaticons-lineal-color-flat-icons/64/external-fundraiser-event-management-flaticons-lineal-color-flat-icons-3.png"
-                    alt="external-fundraiser-event-management-flaticons-lineal-color-flat-icons-3"
-                  />
-                </div>
 
-                <div
-                  className="content"
-                  dangerouslySetInnerHTML={{ __html: value }}
-                />
-              </div>
-            </div>
+            {aboutData !== null
+              ? aboutData.map((data, index) => {
+                  return (
+                    <div className="about" key={index}>
+                      <div className="about_title">
+                        <h4>About Us</h4>
+                        <img
+                          width="64"
+                          height="64"
+                          src="https://img.icons8.com/flat-round/64/info.png"
+                          alt="info"
+                        />
+                      </div>
+                      <div className="about_content">
+                        <div className="company_name">
+                          <h6>Company Name </h6>
+                          <img
+                            width="64"
+                            height="64"
+                            src="https://img.icons8.com/pieces/64/experimental-arrow-pieces.png"
+                            alt="experimental-arrow-pieces"
+                          />
+                          <p>{data.companyName}</p>
+                        </div>
+                        <div className="category">
+                          <h6>Category </h6>
+                          <img
+                            width="64"
+                            height="64"
+                            src="https://img.icons8.com/pieces/64/experimental-arrow-pieces.png"
+                            alt="experimental-arrow-pieces"
+                          />
+                          <p>Category</p>
+                        </div>
+                        <div className="year">
+                          <h6>Year of Est </h6>
+                          <img
+                            width="64"
+                            height="64"
+                            src="https://img.icons8.com/pieces/64/experimental-arrow-pieces.png"
+                            alt="experimental-arrow-pieces"
+                          />
+                          <p>{data.yearOfEst}</p>
+                        </div>
+                        <div className="bussiness">
+                          <h6>Nature of Business</h6>
+                          <img
+                            width="64"
+                            height="64"
+                            src="https://img.icons8.com/pieces/64/experimental-arrow-pieces.png"
+                            alt="experimental-arrow-pieces"
+                          />
+                          <p>{data.bussiness}</p>
+                        </div>
+                      </div>
+                      <div className="our_specialities">
+                        <div className="specialities_title">
+                          <h4>Our Specialities</h4>
+                          <img
+                            width="64"
+                            height="64"
+                            src="https://img.icons8.com/external-flaticons-lineal-color-flat-icons/64/external-fundraiser-event-management-flaticons-lineal-color-flat-icons-3.png"
+                            alt="external-fundraiser-event-management-flaticons-lineal-color-flat-icons-3"
+                          />
+                        </div>
+
+                        <div
+                          className="content"
+                          dangerouslySetInnerHTML={{ __html: data.value }}
+                        />
+                      </div>
+                    </div>
+                  );
+                })
+              : ""}
             {/* Product page */}
             <div className="product_services">
-              <div className="product_title">
-                <h4>Product & Services</h4>
-                <img
-                  width="64"
-                  height="64"
-                  src="https://img.icons8.com/external-flat-geotatah/64/external-brand-customer-engagement-flat-flat-geotatah-2.png"
-                  alt="external-brand-customer-engagement-flat-flat-geotatah-2"
-                />
-              </div>
-              <div className="service_1">
-                <div className="service_title">
-                  <h4> Write Service Title</h4>
-                  <img
-                    width="30"
-                    height="30"
-                    src="https://img.icons8.com/offices/30/e-learning.png"
-                    alt="e-learning"
-                  />
-                </div>
-                <div
-                  className="service1_content"
-                  dangerouslySetInnerHTML={{ __html: serviceMessage }}
-                />
+              {serviceData !== null
+                ? serviceData.map((data, index) => {
+                    return (
+                      <div key={index}>
+                        <div className="product_title">
+                          <h4>Product & Services</h4>
+                          <img
+                            width="64"
+                            height="64"
+                            src="https://img.icons8.com/external-flat-geotatah/64/external-brand-customer-engagement-flat-flat-geotatah-2.png"
+                            alt="external-brand-customer-engagement-flat-flat-geotatah-2"
+                          />
+                        </div>
+                        <div className="service_1">
+                          <div className="service_title">
+                            <h4> {data.serviceTitle}</h4>
+                            <img
+                              width="30"
+                              height="30"
+                              src="https://img.icons8.com/offices/30/e-learning.png"
+                              alt="e-learning"
+                            />
+                          </div>
+                          <div
+                            className="service1_content"
+                            dangerouslySetInnerHTML={{
+                              __html: data.serviceMessage,
+                            }}
+                          />
 
-                <div className="service1_image">
-                  <img src={website} alt="website image" />
-                </div>
-                <div className="service1_actions">
-                  <p className="price"> 3000</p>
+                          <div className="service1_image">
+                            <img src={data.servicePic} alt="website image" />
+                          </div>
+                          <div className="service1_actions">
+                            <p className="price">Rs : {data.servicePrice}</p>
 
-                  <a href="to:+91 8825457794">
-                    <img src={phone} alt="phone" />
-                    <p>Enquiry</p>
-                  </a>
-                </div>
-              </div>
+                            <a href={`to:+91 ${data.serviceEnquiry}`}>
+                              <img src={phone} alt="phone" />
+                              <p>Enquiry</p>
+                            </a>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })
+                : ""}
             </div>
             {/* payment page */}
             <div className="payment">

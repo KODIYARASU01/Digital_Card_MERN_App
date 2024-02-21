@@ -5,7 +5,7 @@ import company from "../assets/aristostech.jpg";
 import { useState } from "react";
 // import { registerValidate } from "./helper/registerValidate";
 // import useFormik from "formik";
-import convertToBase64 from "../helper/convert.js";
+import { convertToBase64 } from "../helper/convert.js";
 import axios from "axios";
 export default function Register() {
   let navigate = useNavigate();
