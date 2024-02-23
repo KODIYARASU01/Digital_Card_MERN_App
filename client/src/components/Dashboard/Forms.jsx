@@ -1,14 +1,14 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./Form.scss";
 import profile from "/src/assets/profile.png";
 import axios from "axios";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import {
+  convertGalleryToBase64,
   convertservicePicToBase64,
   convertLogoPicToBase64,
-} from "../../helper/convert.js";
-
+} from "../helper/convert.js";
 const Forms = () => {
   let [error, setError] = useState();
   //Profile
@@ -65,7 +65,7 @@ const Forms = () => {
 
   //Gallery :
 
-  let [gallery, setGallery] = useState();
+  let [gallery, setGallery] = useState([]);
 
   //Show & Hide Profile:
   //   let [show, setShow] = useState(true);
@@ -97,11 +97,15 @@ const Forms = () => {
         phoneNumber,
       };
       // Make authenticated request with bearer token
-      await axios.post("http://localhost:3001/api/user/", data, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      await axios.post(
+        "https://digital-card-mern-app-server.onrender.com/api/user/",
+        data,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
       count++;
       alert("Form Submited Sucessfully");
     } catch (error) {
@@ -125,11 +129,15 @@ const Forms = () => {
         value,
       };
       // Make authenticated request with bearer token
-      await axios.post("http://localhost:3001/api/user/about", aboutData, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      await axios.post(
+        "https://digital-card-mern-app-server.onrender.com/api/user/about",
+        aboutData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
       alert("Form Submited Sucessfully");
     } catch (error) {
       // Handle errors
@@ -152,11 +160,15 @@ const Forms = () => {
         serviceEnquiry,
       };
       // Make authenticated request with bearer token
-      await axios.post("http://localhost:3001/api/user/service", serviceData, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      await axios.post(
+        "https://digital-card-mern-app-server.onrender.com/api/user/service",
+        serviceData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
       alert("Form Submited Sucessfully");
     } catch (error) {
       // Handle errors
@@ -181,11 +193,15 @@ const Forms = () => {
         IFSC,
       };
       // Make authenticated request with bearer token
-      await axios.post("http://localhost:3001/api/user/payment", paymentData, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      await axios.post(
+        "https://digital-card-mern-app-server.onrender.com/api/user/payment",
+        paymentData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
       alert("Payment Form Submited Sucessfully");
     } catch (error) {
       // Handle errors
@@ -193,6 +209,31 @@ const Forms = () => {
       alert("Something Error" + error.message);
     }
   }
+
+  //gallery from submit:
+  async function handleGallerySubmit(e) {
+    e.preventDefault();
+    try {
+      // Retrieve token from local storage or wherever it's stored
+      const token = localStorage.getItem("token");
+
+      let galleryData = {
+        gallery,
+      };
+      // Make authenticated request with bearer token
+      await axios.post("http://localhost:3001/api/user/gallery", galleryData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      alert("Gallery Form Submited Sucessfully");
+    } catch (error) {
+      // Handle errors
+      setError(error.response.data.error);
+      alert("Something Error" + error.message);
+    }
+  }
+
   //Formik does not support file upload so we could create handler :
   const UploadLogoPic = async (e) => {
     let base64 = await convertLogoPicToBase64(e.target.files[0]);
@@ -203,6 +244,12 @@ const Forms = () => {
     let base64 = await convertservicePicToBase64(e.target.files[0]);
 
     setServicePic(base64);
+  };
+
+  const UploadGalleryPic = async (e) => {
+    let base64 = await convertGalleryToBase64(e.target.files[0]);
+
+    setGallery(base64);
   };
 
   return (
@@ -769,7 +816,7 @@ const Forms = () => {
             className="home_form"
             id={galleryFormShow ? "galleryFormShow" : "galleryFormHide"}
           >
-            <form>
+            <form onSubmit={handleGallerySubmit}>
               <div className="profile_heading">Create Your Gallery</div>
               <div className="form_group">
                 <label htmlFor="pic">Choose Your Picture</label>
@@ -777,10 +824,11 @@ const Forms = () => {
                   <img src={profile} alt="upload" />
                 </label>
                 <input
-                  // onChange={onUpload}
+                  onChange={UploadGalleryPic}
+                  accept="image/*"
                   type="file"
-                  id="pic"
-                  name="pic"
+                  id="gallery"
+                  name="gallery"
                 />
               </div>
               <div className="form_submit">
